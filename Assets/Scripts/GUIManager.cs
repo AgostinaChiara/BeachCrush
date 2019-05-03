@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GUIManager : MonoBehaviour
 {
     public Text movesText, scoreText;
     private int moveCounter;
     private int score;
+
+    public SceneChanger sceneChanger;
 
     public int Score
     {
@@ -57,11 +60,10 @@ public class GUIManager : MonoBehaviour
         scoreText.text = "Score: " + score;
     }
 
-    // Update is called once per frame
     private IEnumerator GameOver()
     {
         yield return new WaitUntil(() => !BoardManager.sharedInstance.isShifting);
-        yield return new WaitForSeconds(0.25f);
-        //TODO: invocar una pantalla diseñada para el Game Over
+        yield return new WaitForSeconds(0.50f);
+        sceneChanger.ChangeSceneTo("LoseScene");
     }
 }

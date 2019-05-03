@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Candy : MonoBehaviour
 {
@@ -9,6 +10,13 @@ public class Candy : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private bool isSelected = false;
+
+    public GameObject columnArrow;
+    public GameObject rowArrow;
+    public bool isColumnBomb = false;
+    public bool isRowBomb = false;
+
+    //Animator animator;
     
     public int id;
 
@@ -111,6 +119,7 @@ public class Candy : MonoBehaviour
         List<GameObject> matchingCandies = new List<GameObject>();
         RaycastHit2D hit = Physics2D.Raycast(this.transform.position, direction);
         while(hit.collider != null && hit.collider.GetComponent<SpriteRenderer>().sprite == spriteRenderer.sprite) {
+            
             matchingCandies.Add(hit.collider.gameObject);
             hit = Physics2D.Raycast(hit.collider.transform.position, direction);
         }
@@ -156,5 +165,33 @@ public class Candy : MonoBehaviour
             StopCoroutine(BoardManager.sharedInstance.FindNullCandies());
             StartCoroutine(BoardManager.sharedInstance.FindNullCandies());
         }
+    }
+
+    List<GameObject> GetColumnPieces(int column)
+    {
+        List<GameObject> dots = new List<GameObject>();
+        for (int i = 0; i < BoardManager.sharedInstance.xSize; i++)
+        {
+            if(BoardManager.sharedInstance.candies[column, i] != null)
+            {
+                dots.Add(BoardManager.sharedInstance.candies[column, i]);
+                BoardManager.sharedInstance.candies[column, i].GetComponent<Candy>().CanSwipe();
+            }
+        }
+        return dots;
+    }
+
+    List<GameObject> GetRowPieces(int row)
+    {
+        List<GameObject> dots = new List<GameObject>();
+        for (int i = 0; i < BoardManager.sharedInstance.ySize; i++)
+        {
+            if (BoardManager.sharedInstance.candies[row, i] != null)
+            {
+                dots.Add(BoardManager.sharedInstance.candies[row, i]);
+                BoardManager.sharedInstance.candies[row, i].GetComponent<Candy>().CanSwipe();
+            }
+        }
+        return dots;
     }
 }

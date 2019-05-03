@@ -8,8 +8,9 @@ public class BoardManager : MonoBehaviour
     public List<Sprite> prefabs = new List<Sprite>();
     public GameObject currentCandy;
     public int xSize, ySize;
+    public AudioSource candiesFall; 
 
-    private GameObject[,] candies;
+    public GameObject[,] candies;
 
     public bool isShifting { get; set; }
 
@@ -97,9 +98,10 @@ public class BoardManager : MonoBehaviour
                 nullCandies++;
             }
             renderers.Add(spriteRenderer);
+            candiesFall.Play();
         }
 
-        for(int i = 0; i < nullCandies; i++) {
+        for (int i = 0; i < nullCandies; i++) {
             GUIManager.sharedInstance.Score += 10;
 
             yield return new WaitForSeconds(shiftDelay);
@@ -108,6 +110,7 @@ public class BoardManager : MonoBehaviour
                 renderers[j + 1].sprite = GetNewCandy(x, ySize - 1);
             }
         }
+
 
         isShifting = false;
     }

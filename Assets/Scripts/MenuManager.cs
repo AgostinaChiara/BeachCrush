@@ -1,18 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class MenuManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public static MenuManager sharedInstance;
+    public Canvas menuCanvas;
+    public AudioMixer audioMixer;
+
+    private void Awake()
     {
-        
+        if(sharedInstance == null)
+        {
+            sharedInstance = this;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void HideMenu()
     {
-        
+        menuCanvas.enabled = false;
+    }
+
+    public void ShowMenu()
+    {
+        menuCanvas.enabled = true;
+    }
+
+    public void SetVolume(float volume)
+    {
+        audioMixer.SetFloat("volume", volume);
     }
 }
