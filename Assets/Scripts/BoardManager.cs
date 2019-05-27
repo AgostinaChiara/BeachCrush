@@ -2,8 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum GameState
+{
+    menu,
+    inGame,
+    pause,
+    gameOver
+}
+
 public class BoardManager : MonoBehaviour
 {
+    public GameState currentGameState = GameState.menu;
+
     public static BoardManager sharedInstance;
     public List<Sprite> prefabs = new List<Sprite>();
     public GameObject currentCandy;
@@ -26,7 +36,7 @@ public class BoardManager : MonoBehaviour
         } else {
             Destroy(gameObject);
         }
-        
+
         Vector2 offset = currentCandy.GetComponent<BoxCollider2D>().size;
         CreateInitialBoard(offset);
     }

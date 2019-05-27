@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Sun
+  - Boat
+  - Ocen
+  - Watermellow
+  - Shell
+  - Fish
+  - BoardManager
   layers:
   - Default
   - TransparentFX

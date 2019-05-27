@@ -16,6 +16,8 @@ public class Candy : MonoBehaviour
     public bool isColumnBomb = false;
     public bool isRowBomb = false;
 
+    private GoalManager goalManager;
+
     //Animator animator;
     
     public int id;
@@ -31,6 +33,7 @@ public class Candy : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        goalManager = GetComponent<GoalManager>();
     }
 
     private void SelectCandy()
@@ -65,6 +68,11 @@ public class Candy : MonoBehaviour
                     previousSelected.DeselectCandy();
                     FindAllMatches();
 
+                    if (goalManager != null)
+                    {
+                        goalManager.CompareGoals(spriteRenderer.name.ToString());
+                        goalManager.UpdateGoals();
+                    }
                     GUIManager.sharedInstance.MoveCounter--;
                 } else {
                     previousSelected.DeselectCandy();
@@ -119,7 +127,6 @@ public class Candy : MonoBehaviour
         List<GameObject> matchingCandies = new List<GameObject>();
         RaycastHit2D hit = Physics2D.Raycast(this.transform.position, direction);
         while(hit.collider != null && hit.collider.GetComponent<SpriteRenderer>().sprite == spriteRenderer.sprite) {
-            
             matchingCandies.Add(hit.collider.gameObject);
             hit = Physics2D.Raycast(hit.collider.transform.position, direction);
         }
