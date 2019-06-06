@@ -120,6 +120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5b9fe481a88ae046bfc44bd52096c84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boardManager: {fileID: 1266977871675298934, guid: d86e0394e7abfda4b8b52bfa927bfb09,
+    type: 3}
   columnArrow: {fileID: 8213214579039263832, guid: 290d600c43c36804784344bb2154e465,
     type: 3}
   rowArrow: {fileID: 3213496845484789904, guid: 882776cb8a713464bb94a780b9ba13c4,
@@ -137,7 +139,7 @@ Animator:
   m_GameObject: {fileID: 5210518015822160703}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ed9c03fd6752754408b4c72bf155f5f9, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

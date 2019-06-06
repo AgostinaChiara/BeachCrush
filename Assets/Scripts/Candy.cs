@@ -11,6 +11,8 @@ public class Candy : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private bool isSelected = false;
 
+    private BoardManager boardManager;
+
     public GameObject columnArrow;
     public GameObject rowArrow;
     public bool isColumnBomb = false;
@@ -34,6 +36,7 @@ public class Candy : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         goalManager = GetComponent<GoalManager>();
+        boardManager = GameObject.FindWithTag("BoardManager").GetComponent<BoardManager>();
     }
 
     private void SelectCandy()
@@ -52,33 +55,37 @@ public class Candy : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(spriteRenderer.sprite == null || BoardManager.sharedInstance.isShifting) {
-            return;
-        }
+        if(boardManager.currentGameState == GameState.inGame)
+        {
+            if(spriteRenderer.sprite == null || BoardManager.sharedInstance.isShifting)
+            {
+                return;
+            }
 
-        if(isSelected) {
-            DeselectCandy();
-        } else {
-            if(previousSelected == null) {
-                SelectCandy();
+            if(isSelected) {
+                DeselectCandy();
             } else {
-                if(CanSwipe()) {
-                    SwapSprite(previousSelected);
-                    previousSelected.FindAllMatches();
-                    previousSelected.DeselectCandy();
-                    FindAllMatches();
-
-                    if (goalManager != null)
-                    {
-                        goalManager.CompareGoals(spriteRenderer.name.ToString());
-                        goalManager.UpdateGoals();
-                    }
-                    GUIManager.sharedInstance.MoveCounter--;
-                } else {
-                    previousSelected.DeselectCandy();
+                if(previousSelected == null) {
                     SelectCandy();
-                }
-            }                                         
+                } else {
+                    if(CanSwipe()) {
+                        SwapSprite(previousSelected);
+                        previousSelected.FindAllMatches();
+                        previousSelected.DeselectCandy();
+                        FindAllMatches();
+
+                        if (goalManager != null)
+                        {
+                            goalManager.CompareGoals(spriteRenderer.name.ToString());
+                            goalManager.UpdateGoals();
+                        }
+                        GUIManager.sharedInstance.MoveCounter--;
+                    } else {
+                        previousSelected.DeselectCandy();
+                        SelectCandy();
+                    }
+                }                                         
+            }
         }
     }
 

@@ -6,19 +6,19 @@ public enum GameState
 {
     menu,
     inGame,
-    pause,
-    gameOver
+    pause
 }
 
 public class BoardManager : MonoBehaviour
 {
-    public GameState currentGameState = GameState.menu;
+    public GameState currentGameState = GameState.inGame;
 
     public static BoardManager sharedInstance;
     public List<Sprite> prefabs = new List<Sprite>();
     public GameObject currentCandy;
     public int xSize, ySize;
-    public AudioSource candiesFall; 
+    private SoundManager soundManager;
+    private GoalManager goalManager;
 
     public GameObject[,] candies;
 
@@ -39,6 +39,10 @@ public class BoardManager : MonoBehaviour
 
         Vector2 offset = currentCandy.GetComponent<BoxCollider2D>().size;
         CreateInitialBoard(offset);
+        currentGameState = GameState.inGame;
+
+        soundManager = FindObjectOfType<SoundManager>();
+        goalManager = FindObjectOfType<GoalManager>();
     }
 
     private void CreateInitialBoard(Vector2 offset)
@@ -93,6 +97,11 @@ public class BoardManager : MonoBehaviour
                 candies[x, y].GetComponent<Candy>().FindAllMatches();
             }
         }
+
+        if (currentGameState != GameState.pause)
+        {
+            currentGameState = GameState.inGame;
+        }
     }
 
     private IEnumerator MakeCandiesFall(int x, int yStart, float shiftDelay = 0.05f)
@@ -106,9 +115,18 @@ public class BoardManager : MonoBehaviour
             SpriteRenderer spriteRenderer = candies[x, y].GetComponent<SpriteRenderer>();
             if(spriteRenderer.sprite == null) {
                 nullCandies++;
+                if (goalManager != null)
+                {
+                    goalManager.CompareGoals(candies[x, y].ToString());
+                    goalManager.UpdateGoals();
+                }
             }
             renderers.Add(spriteRenderer);
-            candiesFall.Play();
+        }
+
+        if(soundManager != null)
+        {
+            soundManager.PlayDestroyNoise();
         }
 
         for (int i = 0; i < nullCandies; i++) {
@@ -120,7 +138,6 @@ public class BoardManager : MonoBehaviour
                 renderers[j + 1].sprite = GetNewCandy(x, ySize - 1);
             }
         }
-
 
         isShifting = false;
     }
