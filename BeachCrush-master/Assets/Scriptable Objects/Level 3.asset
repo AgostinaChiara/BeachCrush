@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25f9cc57d2fa59a4181f41d1be170e15, type: 3}
+  m_Name: Level 3
+  m_EditorClassIdentifier: 
+  width: 7
+  heigth: 7
+  candies:
+  - {fileID: 5210518015822160703, guid: 89ef2696601b43741a4c30983d1c2674, type: 3}
+  scoreGoals: 000000000000000000000000
+  endGameRequirements:
+    gameType: 0
+    counterValue: 26
+  levelGoals:
+  - numberNeeded: 17
+    numberCollected: 0
+    goalSprite: {fileID: 21300028, guid: 95601a9623bab834882abb9ac0855292, type: 3}
+    matchValue: Candies_14 (UnityEngine.Sprite)
+  - numberNeeded: 11
+    numberCollected: 0
+    goalSprite: {fileID: 21300056, guid: 95601a9623bab834882abb9ac0855292, type: 3}
+    matchValue: Candies_28 (UnityEngine.Sprite)
+  - numberNeeded: 14
+    numberCollected: 0
+    goalSprite: {fileID: 21300014, guid: 95601a9623bab834882abb9ac0855292, type: 3}
+    matchValue: Candies_7 (UnityEngine.Sprite)
