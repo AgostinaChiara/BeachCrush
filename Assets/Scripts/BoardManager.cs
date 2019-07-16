@@ -6,12 +6,17 @@ public enum GameState
 {
     menu,
     inGame,
-    pause
+    pause,
+    win,
+    lose
 }
 
 public class BoardManager : MonoBehaviour
 {
     public GameState currentGameState = GameState.inGame;
+
+    public World world;
+    public int level;
 
     public static BoardManager sharedInstance;
     public List<Sprite> prefabs = new List<Sprite>();
@@ -19,6 +24,9 @@ public class BoardManager : MonoBehaviour
     public int xSize, ySize;
     private SoundManager soundManager;
     private GoalManager goalManager;
+    private GameData gameData;
+    public int[] scoreGoals;
+    private int numberStars;
 
     public GameObject[,] candies;
 
@@ -27,6 +35,27 @@ public class BoardManager : MonoBehaviour
     private Candy selectedCandy;
 
     public const int MinCandiesToMatch = 2;
+
+    private void Awake()
+    {
+        if(PlayerPrefs.HasKey("Current Level"))
+        {
+            level = PlayerPrefs.GetInt("Current Level");
+        }
+
+        if(world != null)
+        {
+            if(level < world.levels.Length)
+            {
+                if (world.levels[level] != null )
+                {
+                    xSize = world.levels[level].width;
+                    ySize = world.levels[level].heigth;
+                    scoreGoals = world.levels[level].scoreGoals;
+                }
+            }
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -39,10 +68,16 @@ public class BoardManager : MonoBehaviour
 
         Vector2 offset = currentCandy.GetComponent<BoxCollider2D>().size;
         CreateInitialBoard(offset);
-        currentGameState = GameState.inGame;
+        currentGameState = GameState.pause;
 
         soundManager = FindObjectOfType<SoundManager>();
         goalManager = FindObjectOfType<GoalManager>();
+        gameData = FindObjectOfType<GameData>();
+
+        if (gameData != null)
+        {
+            gameData.Load();
+        }
     }
 
     private void CreateInitialBoard(Vector2 offset)
@@ -115,11 +150,6 @@ public class BoardManager : MonoBehaviour
             SpriteRenderer spriteRenderer = candies[x, y].GetComponent<SpriteRenderer>();
             if(spriteRenderer.sprite == null) {
                 nullCandies++;
-                if (goalManager != null)
-                {
-                    goalManager.CompareGoals(candies[x, y].ToString());
-                    goalManager.UpdateGoals();
-                }
             }
             renderers.Add(spriteRenderer);
         }
@@ -131,6 +161,29 @@ public class BoardManager : MonoBehaviour
 
         for (int i = 0; i < nullCandies; i++) {
             GUIManager.sharedInstance.Score += 10;
+            for(int n = 0; n < scoreGoals.Length; n++)
+            {
+                if(GUIManager.sharedInstance.Score > scoreGoals[n] && numberStars < n + 1)
+                {
+                    numberStars++;
+                }
+            }
+
+            if(gameData != null)
+            {
+                int highScore = gameData.saveData.highScores[level];
+                if(GUIManager.sharedInstance.Score > highScore)
+                {
+                    gameData.saveData.highScores[level] = GUIManager.sharedInstance.Score;
+                }
+
+                int currentStars = gameData.saveData.stars[level];
+                if (numberStars > currentStars)
+                {
+                    gameData.saveData.stars[level] = numberStars;
+                }
+                gameData.Save();
+            }
 
             yield return new WaitForSeconds(shiftDelay);
             for(int j = 0; j < renderers.Count-1; j++) {

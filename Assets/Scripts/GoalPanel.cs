@@ -16,15 +16,14 @@ public class GoalPanel : MonoBehaviour
         Setup();
     }
 
+    private void Update()
+    {
+        transform.localScale = new Vector3(1, 1);
+    }
+
     void Setup()
     {
         thisImage.sprite = thisSprite;
         thisText.text = thisString;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

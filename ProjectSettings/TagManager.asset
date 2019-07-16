@@ -4,13 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Sun
-  - Boat
-  - Ocen
-  - Watermellow
-  - Shell
-  - Fish
   - BoardManager
+  - HomeMenu
+  - LevelSelect
   layers:
   - Default
   - TransparentFX

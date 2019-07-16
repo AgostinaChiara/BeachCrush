@@ -11,16 +11,7 @@ public class Candy : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private bool isSelected = false;
 
-    private BoardManager boardManager;
-
-    public GameObject columnArrow;
-    public GameObject rowArrow;
-    public bool isColumnBomb = false;
-    public bool isRowBomb = false;
-
     private GoalManager goalManager;
-
-    //Animator animator;
     
     public int id;
 
@@ -35,8 +26,7 @@ public class Candy : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        goalManager = GetComponent<GoalManager>();
-        boardManager = GameObject.FindWithTag("BoardManager").GetComponent<BoardManager>();
+        goalManager = FindObjectOfType<GoalManager>();
     }
 
     private void SelectCandy()
@@ -55,7 +45,7 @@ public class Candy : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(boardManager.currentGameState == GameState.inGame)
+        if(BoardManager.sharedInstance.currentGameState == GameState.inGame)
         {
             if(spriteRenderer.sprite == null || BoardManager.sharedInstance.isShifting)
             {
@@ -73,12 +63,6 @@ public class Candy : MonoBehaviour
                         previousSelected.FindAllMatches();
                         previousSelected.DeselectCandy();
                         FindAllMatches();
-
-                        if (goalManager != null)
-                        {
-                            goalManager.CompareGoals(spriteRenderer.name.ToString());
-                            goalManager.UpdateGoals();
-                        }
                         GUIManager.sharedInstance.MoveCounter--;
                     } else {
                         previousSelected.DeselectCandy();
@@ -149,7 +133,14 @@ public class Candy : MonoBehaviour
             matchingCandies.AddRange(FindMatch(direction));
         }
         if(matchingCandies.Count >= BoardManager.MinCandiesToMatch) {
+            for(int i = 0; i < 1; i++)
+            {
+                goalManager.CollectCandy(matchingCandies[i].GetComponent<SpriteRenderer>().sprite.ToString());
+            }
             foreach(GameObject candy in matchingCandies){
+                goalManager.CompareGoals(candy.GetComponent<SpriteRenderer>().sprite.ToString());
+                goalManager.UpdateGoals();
+
                 candy.GetComponent<SpriteRenderer>().sprite = null;
             }
             return true;
@@ -179,33 +170,5 @@ public class Candy : MonoBehaviour
             StopCoroutine(BoardManager.sharedInstance.FindNullCandies());
             StartCoroutine(BoardManager.sharedInstance.FindNullCandies());
         }
-    }
-
-    List<GameObject> GetColumnPieces(int column)
-    {
-        List<GameObject> dots = new List<GameObject>();
-        for (int i = 0; i < BoardManager.sharedInstance.xSize; i++)
-        {
-            if(BoardManager.sharedInstance.candies[column, i] != null)
-            {
-                dots.Add(BoardManager.sharedInstance.candies[column, i]);
-                BoardManager.sharedInstance.candies[column, i].GetComponent<Candy>().CanSwipe();
-            }
-        }
-        return dots;
-    }
-
-    List<GameObject> GetRowPieces(int row)
-    {
-        List<GameObject> dots = new List<GameObject>();
-        for (int i = 0; i < BoardManager.sharedInstance.ySize; i++)
-        {
-            if (BoardManager.sharedInstance.candies[row, i] != null)
-            {
-                dots.Add(BoardManager.sharedInstance.candies[row, i]);
-                BoardManager.sharedInstance.candies[row, i].GetComponent<Candy>().CanSwipe();
-            }
-        }
-        return dots;
     }
 }

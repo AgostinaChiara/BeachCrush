@@ -18,10 +18,41 @@ public class GoalManager : MonoBehaviour
     public GameObject goalPrefab;
     public GameObject goalIntroParent;
     public GameObject goalGameParent;
+    public GameObject goalLoseParent;
+
+    private BoardManager board;
+    private GUIManager guiManager;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        board = FindObjectOfType<BoardManager>();
+        guiManager = FindObjectOfType<GUIManager>();
+
+        GetGoals();
         SetupGoals();
+    }
+
+    void GetGoals()
+    {
+        if (board != null)
+        {
+            if (board.world != null)
+            {
+                if (board.level < board.world.levels.Length)
+                {
+                    if (board.world.levels[board.level] != null)
+                    {
+                        levelGoals = board.world.levels[board.level].levelGoals;
+                        for(int i = 0; i < levelGoals.Length; i++)
+                        {
+                            levelGoals[i].numberCollected = 0;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     void SetupGoals()
@@ -47,6 +78,7 @@ public class GoalManager : MonoBehaviour
         }
     }
 
+
     public void UpdateGoals()
     {
         int goalsCompleted = 0;
@@ -56,22 +88,54 @@ public class GoalManager : MonoBehaviour
             if(levelGoals[i].numberCollected >= levelGoals[i].numberNeeded)
             {
                 goalsCompleted++;
-                currentGoals[i].thisText.text = "" + levelGoals[i].numberCollected + "/" + levelGoals[i].numberNeeded;
+                currentGoals[i].thisText.text = "" + levelGoals[i].numberNeeded + "/" + levelGoals[i].numberNeeded;
             }
         }
         if(goalsCompleted >= levelGoals.Length)
         {
-            Debug.Log("You win");
+            StartCoroutine(GUIManager.sharedInstance.WinGame());
+        }
+    }
+
+    public void CollectCandy(string candyToCompare)
+    {
+        for(int i = 0; i < levelGoals.Length; i++)
+        {
+            if (candyToCompare == levelGoals[i].matchValue)
+            {
+                levelGoals[i].numberCollected++;
+            }
         }
     }
 
     public void CompareGoals(string goalToCompare)
-    {
+    { 
         for(int i = 0; i < levelGoals.Length; i++)
         {
             if(goalToCompare == levelGoals[i].matchValue)
             {
                 levelGoals[i].numberCollected++;
+            }
+            
+        }
+    }
+
+    public void SetCandiesLeft()
+    {
+        for(int i = 0; i < levelGoals.Length; i++)
+        {
+            GameObject goal = Instantiate(goalPrefab, goalLoseParent.transform.position, Quaternion.identity);
+            goal.transform.SetParent(goalLoseParent.transform);
+            GoalPanel panel = goal.GetComponent<GoalPanel>();
+            panel.thisSprite = levelGoals[i].goalSprite;
+            panel.thisString = Mathf.Abs(levelGoals[i].numberNeeded - levelGoals[i].numberCollected).ToString();
+            if(panel.thisString == "1" || panel.thisString == "-1")
+            {
+                panel.thisString = "0";
+                if (panel.thisString == "-2" || panel.thisString == "-3")
+                {
+                    panel.thisString = "0";
+                }
             }
         }
     }
